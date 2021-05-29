@@ -5,9 +5,13 @@
 python path/to/ffft.py [operation] <option>
 
 [operation]:
-    connect <name>: make the current directory be connected to a server. starts setting guide.
+    connect: make the current directory be connected to a server. starts setting guide.
 
-    update: update the whole project at one time.
+    update [-u|-d] <files>: update the scecified files at one time.
+        If <files> not given, update all the files in the project directory.
+
+        -u: only upload files.
+        -d: only delete files which have been already deleted in the local.
 
 """
 
