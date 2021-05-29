@@ -1,4 +1,4 @@
-# FFFT.PY
+# FTP-Uploader
 # a simple file uploader via FTP by Taito Haga
 
 """
