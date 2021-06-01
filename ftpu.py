@@ -19,15 +19,6 @@ import sys, os, json, glob
 from getpass import getpass
 from ftplib import FTP
 
-# detect binary or text.
-# It is difficult to detect the filetype but this is_binary just consider files with the particular expansions as "text" or "binary"!
-TEXT_EXPANSIONS = ["txt", "html", "htm", "md", "py", "csv", "php"]
-def is_binary(filename: str):
-    for exp in TEXT_EXPANSIONS:
-        if filename.endswith(exp):
-            return False
-    return True
-
 # path to config file
 CONFIG_PATH = "ffftpy-config.json"
 
@@ -128,6 +119,7 @@ class FTPUploader():
                 # split the full path, go to the target.
                 # if the subdirectories do not exist, make them all.
                 ftp.cwd(entry["project_root_dir"])
+                dirpath= dirpath.replace("/", os.path.sep)
                 direction = dirpath.split(os.sep)
                 for dirname in direction:
                     dirs = [filename for filename, opt in ftp.mlsd(facts=["type"]) if opt["type"].endswith("dir")]
@@ -137,18 +129,16 @@ class FTPUploader():
                     ftp.cwd(dirname)
 
             # now sure ftp.pwd() is in `basepath`
+            is_new = basepath in ftp.nlst()
             with open(path, mode="rb") as f:
-                is_new = basepath in ftp.nlst()
-                if is_binary(path):
-                    ftp.storbinary("STOR %s" % basepath, f)
-                else:
-                    ftp.storlines("STOR %s" % basepath, f)
-                if is_new:
-                    print("Updated:", path)
-                    updated += 1
-                else:
-                    print("Created:", path)
-                    created += 1
+                ftp.storbinary("STOR %s" % basepath, f)
+                ftp.storbinary("STOR %s" % basepath, f)
+            if is_new:
+                print("Updated:", path)
+                updated += 1
+            else:
+                print("Created:", path)
+                created += 1
 
             prev_dirpath = dirpath
         return created, updated
