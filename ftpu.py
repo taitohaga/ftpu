@@ -132,7 +132,6 @@ class FTPUploader():
             is_new = basepath in ftp.nlst()
             with open(path, mode="rb") as f:
                 ftp.storbinary("STOR %s" % basepath, f)
-                ftp.storbinary("STOR %s" % basepath, f)
             if is_new:
                 print("Updated:", path)
                 updated += 1
